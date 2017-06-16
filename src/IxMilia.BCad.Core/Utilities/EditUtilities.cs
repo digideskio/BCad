@@ -568,17 +568,48 @@ namespace IxMilia.BCad.Utilities
             var beziers = entityToTrim.GetPrimitives().Cast<PrimitiveBezier>();
             foreach (var bezier in beziers)
             {
-                var t = bezier.GetParameterValueForPoint(pivot);
-                if (t.HasValue)
+                // split bezier at intersection points and the curve containing the pivot gets deleted, others are kept
+                foreach (var intersection in intersectionPoints)
                 {
-                    // pivot is on the curve, split curve into as many points as necessary
-                    //var parts = bezier.Split()
-                    throw new NotImplementedException();
-                }
-                else
-                {
-                    // not removing this piece, keep the current curve
-                    currentBeziers.Add(bezier);
+                    // TODO: split at all points at once
+                    var t = bezier.GetParameterValueForPoint(intersection);
+                    if (t.HasValue)
+                    {
+                        var parts = bezier.Split(t.GetValueOrDefault());
+                        var isOnPart1 = parts.Item1.IsPointOnPrimitive(pivot);
+                        var isOnPart2 = parts.Item2.IsPointOnPrimitive(pivot);
+                        Debug.Assert(!(isOnPart1 && isOnPart2), "Pivot should not be on both curve parts.");
+                        if (isOnPart1)
+                        {
+                            if (currentBeziers.Count > 0)
+                            {
+                                // add current collection of curves
+                                var spline = Spline.FromBeziers(currentBeziers);
+                                addedList.Add(spline);
+
+                                // reset curve generation
+                                currentBeziers.Clear();
+                            }
+
+                            // start a new curve collection
+                            currentBeziers.Add(parts.Item2);
+                        }
+                        else if (isOnPart2)
+                        {
+                            // add part 1 and add curve collection
+                            currentBeziers.Add(parts.Item1);
+                            var spline = Spline.FromBeziers(currentBeziers);
+                            addedList.Add(spline);
+
+                            // reset curve generation
+                            currentBeziers.Clear();
+                        }
+                        else
+                        {
+                            // keep entire curve
+                            currentBeziers.Add(bezier);
+                        }
+                    }
                 }
             }
 
