@@ -5,20 +5,19 @@ using System.Collections.Generic;
 using System.Composition;
 using System.IO;
 using System.Threading.Tasks;
-using BCad.Server.JsonRpc;
 using BCad.Services;
+using StreamJsonRpc;
 
 namespace BCad.Server
 {
     [ExportWorkspaceService, Shared]
     internal class FileSystemService : IFileSystemService
     {
-        internal static JsonRpcAgent Agent;
+        public JsonRpc Rpc;
 
         public async Task<string> GetFileNameFromUserForOpen()
         {
-            var result = await Agent.SendRequestAsync(new JsonRpcRequest() { Method = "GetFileNameFromUserForOpen" });
-            var fileName = result.Result.ToObject<string>();
+            var fileName = await Rpc.InvokeAsync<string>("GetFileNameFromUserForOpen", null);
             return fileName;
         }
 
@@ -39,7 +38,7 @@ namespace BCad.Server
 
         public Task<Stream> GetStreamForWriting(string fileName)
         {
-            throw new NotImplementedException();
+            return Task.FromResult((Stream)File.Open(fileName, FileMode.Create));
         }
     }
 }

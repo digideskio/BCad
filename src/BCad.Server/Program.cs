@@ -2,7 +2,8 @@
 
 using System;
 using System.Composition;
-using BCad.Server.JsonRpc;
+using StreamJsonRpc;
+using System.Threading.Tasks;
 
 namespace BCad.Server
 {
@@ -10,16 +11,24 @@ namespace BCad.Server
     {
         static void Main(string[] args)
         {
-            new Program().Run();
+            new Program().RunAsync().GetAwaiter().GetResult(); ;
         }
 
-        private void Run()
+        private async Task RunAsync()
         {
+            Console.WriteLine("starting run");
             var workspace = new RpcServerWorkspace();
             CompositionContainer.Container.SatisfyImports(workspace);
-            var server = new ServerAgent(workspace, Console.In, Console.Out);
-            FileSystemService.Agent = server.Agent;
-            server.Agent.StartListeners();
+
+            var server = new ServerAgent(workspace);
+            var serverRpc = JsonRpc.Attach(Console.OpenStandardOutput(), Console.OpenStandardInput(), server);
+            Console.WriteLine("server listening");
+            ((FileSystemService)workspace.FileSystemService).Rpc = serverRpc;
+
+            while (server.IsRunning)
+            {
+                await Task.Delay(50);
+            }
         }
     }
 }
