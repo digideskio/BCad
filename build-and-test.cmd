@@ -13,7 +13,7 @@ set coretestproject=%srcdir%\IxMilia.BCad.Core.Test\IxMilia.BCad.Core.Test.cspro
 set toplevelproject=%filehandlerstestproject%
 
 :: restore packages
-dotnet restore "%srcdir%\BCad\BCad.csproj"
+dotnet restore "%srcdir%\BCad.Wpf.Old\BCad.Wpf.Old.csproj"
 if errorlevel 1 echo Error restoring packages && exit /b 1
 dotnet restore "%toplevelproject%"
 if errorlevel 1 echo Error restoring packages && exit /b 1
