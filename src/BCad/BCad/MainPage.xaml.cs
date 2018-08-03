@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Composition;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,17 @@ namespace IxMilia.BCad
         public MainPage()
         {
             InitializeComponent();
+
+            CompositionContainer.Container.SatisfyImports(this);
+        }
+
+        [Import]
+        public IWorkspace Workspace { get; set; }
+
+        [OnImportsSatisfied]
+        public void OnImportsSatisfied()
+        {
+
         }
     }
 }

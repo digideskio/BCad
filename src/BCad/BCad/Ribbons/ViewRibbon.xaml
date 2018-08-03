@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+<r:RibbonTab xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:r="clr-namespace:IxMilia.BCad.Ribbons"
              x:Class="IxMilia.BCad.Ribbons.ViewRibbon">
     <ContentView.Content>
         <StackLayout>
             <Label Text="View Ribbon" />
         </StackLayout>
     </ContentView.Content>
-</ContentView>
+</r:RibbonTab>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Composition;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,27 +13,41 @@ namespace IxMilia.BCad
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Ribbon : ContentView
     {
-        private Dictionary<string, ContentView> _ribbons;
+        private Dictionary<string, ContentView> _ribbons = new Dictionary<string, ContentView>();
+
+        [Import]
+        public IWorkspace Workspace { get; set; }
+
+        [ImportMany]
+        public IEnumerable<Lazy<RibbonTab, RibbonTabMetadata>> RibbonTabs { get; set; }
 
         public Ribbon()
         {
             InitializeComponent();
 
-            _ribbons = new Dictionary<string, ContentView>()
+            CompositionContainer.Container.SatisfyImports(this);
+        }
+
+        [OnImportsSatisfied]
+        public void OnImportsSatisfied()
+        {
+            foreach (var ribbonId in Workspace.SettingsService.GetValue<string[]>(XamarinSettingsProvider.RibbonOrder))
             {
-                {"Home", new HomeRibbon()},
-                {"View", new ViewRibbon()}
-            };
-            foreach (var name in _ribbons.Keys)
-            {
-                var button = new TaggedButton();
-                button.Tag = name;
-                button.Text = name;
-                button.Clicked += TabButtonClicked;
-                buttonLayout.Children.Add(button);
+                var ribbonMetadata = RibbonTabs.FirstOrDefault(t => t.Metadata.Id == ribbonId);
+                if (ribbonMetadata != null)
+                {
+                    var id = ribbonMetadata.Metadata.Id;
+                    var ribbon = ribbonMetadata.Value;
+                    var ribbonButton = new TaggedButton();
+                    ribbonButton.Tag = id;
+                    ribbonButton.Text = ribbon.Name;
+                    ribbonButton.Clicked += TabButtonClicked;
+                    buttonLayout.Children.Add(ribbonButton);
+                    _ribbons[id] = ribbon;
+                }
             }
 
-            SetRibbon("Home");
+            SetRibbon("home");
         }
 
         private void TabButtonClicked(object sender, EventArgs e)

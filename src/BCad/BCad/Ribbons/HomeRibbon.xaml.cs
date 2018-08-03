@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Composition;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,18 +9,15 @@ using Xamarin.Forms.Xaml;
 
 namespace IxMilia.BCad.Ribbons
 {
+    [ExportRibbonTab("home")]
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class HomeRibbon : ContentView
+    public partial class HomeRibbon : RibbonTab
     {
-        public HomeRibbon()
+        [ImportingConstructor]
+        public HomeRibbon(IWorkspace workspace)
         {
             InitializeComponent();
-        }
-
-        private void CadCommandButtonClicked(object sender, EventArgs e)
-        {
-            var button = (TaggedButton)sender;
-            var command = button.Tag;
+            Name = "Home";
         }
     }
 }
