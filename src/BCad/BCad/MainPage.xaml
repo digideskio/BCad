@@ -6,6 +6,7 @@
 
     <StackLayout>
         <!-- Place new controls here -->
+        <local:Ribbon />
         <Label Text="Welcome to Xamarin.Forms!" 
            HorizontalOptions="Center"
            VerticalOptions="CenterAndExpand" />

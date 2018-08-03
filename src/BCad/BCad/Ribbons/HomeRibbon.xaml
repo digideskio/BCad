@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:IxMilia.BCad"
+             x:Class="IxMilia.BCad.Ribbons.HomeRibbon">
+    <ContentView.Content>
+        <StackLayout Orientation="Horizontal">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="24" />
+                </Grid.RowDefinitions>
+                <Label Grid.Row="1" Text="Draw" HorizontalTextAlignment="Center" />
+                <StackLayout Orientation="Horizontal" Grid.Row="0">
+                    <local:CadCommandButton WidthRequest="48" Text="Line" Tag="Draw.Line" />
+                    <local:CadCommandButton WidthRequest="48" Text="Polyline" Tag="Draw.Polyline" />
+                    <local:CadCommandButton WidthRequest="48" Text="Circle" Tag="Draw.Circle" />
+                    <local:CadCommandButton WidthRequest="48" Text="Arc" Tag="Draw.Arc" />
+                </StackLayout>
+            </Grid>
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>
